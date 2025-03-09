@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Set Default Font */
+body {
+    @apply font-kanit;
+  }
