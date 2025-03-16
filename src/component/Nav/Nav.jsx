@@ -6,7 +6,7 @@ function Nav() {
   const [isOpen, setIsOpen] = useState(false); // สร้าง State เปิด/ปิดเมนู
 
   return (
-    <div className="navbar bg-base-100 sticky top-0 left-0 w-full z-50 shadow-md font-kanit">
+    <div className="navbar bg-white sticky top-0 left-0 w-full z-50 shadow-md font-kanit">
       {/* Logo */}
       <div className="flex-1">
         <Link to="/" className="btn btn-ghost text-xl">
@@ -18,31 +18,42 @@ function Nav() {
       <div className="flex-none md:hidden font-kanit">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="btn btn-square btn-ghost "
+          className="btn btn-square btn-ghost"
         >
           {isOpen ? <X size={24} /> : <List size={24} />}
         </button>
       </div>
 
-      {/* ✅ เมนูแบบเด้งลงมา (ไม่มีเลื่อน) + เงาและพื้นหลังเบลอ */}
+      {/* ✅ เมนูหลัก (เงาเฉพาะในมือถือ) */}
       <div
-        className={`absolute top-16 left-0 w-full bg-white shadow-lg backdrop-blur-md bg-opacity-95 md:static md:flex md:items-center md:w-auto transition-all duration-200 ease-in-out ${
-          isOpen ? "block" : "hidden"
-        }`}
+        className={`absolute top-16 left-0 w-full bg-white md:static md:flex md:items-center md:w-auto transition-all duration-200 ease-in-out 
+          ${isOpen ? "block shadow-lg" : "hidden"} md:shadow-none`}
       >
-        <ul className="menu menu-vertical md:menu-horizontal px-4 md:px-1 font-kanit">
+        <ul className="menu menu-vertical md:menu-horizontal px-4 md:px-1 font-kanit border-none shadow-none bg-transparent">
           <li>
-            <Link to="/" className="hover:text-primary focus:text-primary font-kanit" onClick={() => setIsOpen(false)}>
+            <Link
+              to="/"
+              className="hover:text-primary focus:text-primary font-kanit"
+              onClick={() => setIsOpen(false)}
+            >
               หน้าหลัก
             </Link>
           </li>
           <li>
-            <Link to="/steps" className="hover:text-primary focus:text-primary font-kanit" onClick={() => setIsOpen(false)}>
+            <Link
+              to="/steps"
+              className="hover:text-primary focus:text-primary font-kanit"
+              onClick={() => setIsOpen(false)}
+            >
               ขั้นตอน
             </Link>
           </li>
           <li>
-            <Link to="/more-info" className="hover:text-primary focus:text-primary font-kanit" onClick={() => setIsOpen(false)}>
+            <Link
+              to="/more-info"
+              className="hover:text-primary focus:text-primary font-kanit"
+              onClick={() => setIsOpen(false)}
+            >
               ข้อมูลเพิ่มเติม
             </Link>
           </li>
