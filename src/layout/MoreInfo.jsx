@@ -1,6 +1,6 @@
 function MoreInfo() {
   return (
-    <div className="hero bg-white min-h-screen flex items-center justify-center">
+    <div className="hero bg-white min-h-screen flex items-center justify-center font-kanit">
       <div className="max-w-[1110px] w-full text-center ml-10 mr-10">
         <div>
           <h1 className="text-5xl font-bold mb-10 mt-20">

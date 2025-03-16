@@ -8,7 +8,7 @@ const Badge = ({ level }) => {
     };
   
     return (
-      <span className={`badge ${levelColors[level] || "badge-neutral"} text-white text-xs`}>
+      <span className={`badge ${levelColors[level] || "badge-neutral"} text-white text-xs font-kanit`}>
         ระดับ {level}
       </span>
     );

@@ -23,7 +23,7 @@ function Home() {
 
   return (
     <section id="main_layout">
-      <div className="hero bg-white min-h-screen">
+      <div className="hero bg-white min-h-screen font-kanit">
         <div className="hero-content text-center">
           <div className="max-w-full">
             <h1 className="text-5xl font-bold ">อัปโหลดภาพถ่ายจอประสาทตา</h1>

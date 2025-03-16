@@ -14,7 +14,7 @@ function Process() {
 
   if (!image) {
     return (
-      <div className="hero bg-white min-h-screen flex flex-col items-center justify-center text-center">
+      <div className="hero bg-white min-h-screen flex flex-col items-center justify-center text-center font-kanit">
         <img
           src={process.env.PUBLIC_URL + "/bug-fixing-animate.svg"}
           alt="No image"

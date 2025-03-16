@@ -4,7 +4,7 @@ import ResultIcon from "../assets/result.svg";
 
 function Steps() {
   return (
-    <div className="hero bg-white min-h-screen flex items-center justify-center">
+    <div className="hero bg-white min-h-screen flex items-center justify-center font-kanit">
       <div className="max-w-[1110px] w-full text-center mb-20 mt-20 ml-10 mr-10">
         <h1 className="text-5xl font-bold  mb-20 text-center">
           ขั้นตอนการทำงาน
