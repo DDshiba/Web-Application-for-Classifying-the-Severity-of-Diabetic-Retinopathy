@@ -3,6 +3,8 @@
 @tailwind utilities;
 
 /* Set Default Font */
-body {
+@layer base {
+  body {
     @apply font-kanit;
   }
+}
