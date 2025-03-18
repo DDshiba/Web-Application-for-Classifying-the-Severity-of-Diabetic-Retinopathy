@@ -14,7 +14,9 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 # ✅ สร้าง Flask App
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})  # ✅ อนุญาตทุกโดเมน (Test)
+
+
 
 # ✅ เพิ่ม Endpoint เช็กว่า API ทำงานได้
 @app.route("/", methods=["GET"])
@@ -164,4 +166,6 @@ def analyze():
 
 # ✅ รัน Backend
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    port = int(os.environ.get("PORT", 5000))  # ใช้พอร์ตจาก Render
+    app.run(host="0.0.0.0", port=port, debug=True)
+
