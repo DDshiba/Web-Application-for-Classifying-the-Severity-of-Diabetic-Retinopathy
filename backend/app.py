@@ -1,4 +1,6 @@
 import os
+# ✅ ปิด GPU (Render ไม่มี GPU)
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 import datetime
 import cv2
 import numpy as np
@@ -8,9 +10,6 @@ from flask_cors import CORS
 from PIL import Image
 import io
 from tensorflow.keras.applications.efficientnet import preprocess_input
-
-# ✅ ปิด GPU (Render ไม่มี GPU)
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 # ✅ สร้าง Flask App
 app = Flask(__name__)
