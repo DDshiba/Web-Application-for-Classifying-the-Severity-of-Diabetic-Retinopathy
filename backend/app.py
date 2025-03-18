@@ -9,9 +9,17 @@ from PIL import Image
 import io
 from tensorflow.keras.applications.efficientnet import preprocess_input
 
+# ✅ ปิด GPU (Render ไม่มี GPU)
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
 # ✅ สร้าง Flask App
 app = Flask(__name__)
 CORS(app)
+
+# ✅ เพิ่ม Endpoint เช็กว่า API ทำงานได้
+@app.route("/", methods=["GET"])
+def home():
+    return jsonify({"message": "🔥 Flask API is running on Render!"})
 
 # ✅ กำหนดพาธของโมเดล
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))  
