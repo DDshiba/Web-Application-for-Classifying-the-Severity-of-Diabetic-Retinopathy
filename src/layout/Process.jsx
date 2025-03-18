@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Badge from "../component/Badge/Badge"; // ✅ นำเข้า Badge Component
+import { API_BASE_URL } from "../config";
 
 
 function Process() {
@@ -38,7 +39,7 @@ function Process() {
       formData.append("file", image);
 
       const response = await axios.post(
-        "http://127.0.0.1:5000/analyze",
+        `${API_BASE_URL}/analyze`,  // ✅ ใช้ API URL จาก Render
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
