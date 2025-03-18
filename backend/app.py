@@ -7,11 +7,6 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 # ✅ บังคับให้ TensorFlow ใช้เฉพาะ CPU เท่านั้น
 tf.config.set_visible_devices([], 'GPU')
 
-# ✅ จำกัดการใช้หน่วยความจำ (TensorFlow)
-gpus = tf.config.experimental.list_physical_devices("CPU")
-for gpu in gpus:
-    tf.config.experimental.set_memory_growth(gpu, True)
-
 import datetime
 import cv2
 import numpy as np
