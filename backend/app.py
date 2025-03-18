@@ -1,7 +1,11 @@
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # ปิด GPU ใช้ CPU เท่านั้น
-
 import tensorflow as tf
+
+# ✅ ปิด GPU เพื่อให้รันได้บน Render (ที่ไม่มี GPU)
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
+# ✅ บังคับให้ TensorFlow ใช้เฉพาะ CPU เท่านั้น
+tf.config.set_visible_devices([], 'GPU')
 
 # ✅ จำกัดการใช้หน่วยความจำ (TensorFlow)
 gpus = tf.config.experimental.list_physical_devices("CPU")
