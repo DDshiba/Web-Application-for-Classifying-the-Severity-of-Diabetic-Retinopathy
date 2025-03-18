@@ -1,10 +1,16 @@
 import os
-# ✅ ปิด GPU (Render ไม่มี GPU)
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # ปิด GPU ใช้ CPU เท่านั้น
+
+import tensorflow as tf
+
+# ✅ จำกัดการใช้หน่วยความจำ (TensorFlow)
+gpus = tf.config.experimental.list_physical_devices("CPU")
+for gpu in gpus:
+    tf.config.experimental.set_memory_growth(gpu, True)
+
 import datetime
 import cv2
 import numpy as np
-import tensorflow as tf
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from PIL import Image
