@@ -1,6 +1,6 @@
 Flask
 flask-cors
-tensorflow-cpuS
+tensorflow-cpu
 numpy
 opencv-python-headless
 pillow
