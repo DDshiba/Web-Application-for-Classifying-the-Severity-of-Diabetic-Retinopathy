@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Badge from "../component/Badge/Badge"; // ✅ นำเข้า Badge Component
-import { API_BASE_URL } from "../config";
 
+// ✅ ใช้ตัวแปรจาก .env
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 function Process() {
   const location = useLocation();
@@ -39,7 +40,7 @@ function Process() {
       formData.append("file", image);
 
       const response = await axios.post(
-        `${API_BASE_URL}/analyze`,  // ✅ ใช้ API URL จาก Render
+        `${API_BASE_URL}/analyze`, // ✅ ใช้ตัวแปร API URL จาก .env
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
