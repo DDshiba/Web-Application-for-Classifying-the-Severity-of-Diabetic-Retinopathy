@@ -1,7 +1,6 @@
+fastapi
+uvicorn
 tensorflow
-flask
-flask-cors
-numpy
-opencv-python-headless
 pillow
-gunicorn
+opencv-python
+numpy
