@@ -103,13 +103,10 @@ function Process() {
       {analysisResult && (
         <div className="w-full max-w-2xl bg-base-200 rounded-lg p-5 text-neutral">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-            {/* ✅ ส่วนของผลลัพธ์ */}
-            <div className="flex items-center gap-2">
+            {/* ✅ ส่วนของผลลัพธ์ และ Badge (ติดกันในคอม, แยกบรรทัดในมือถือ) */}
+            <div className="flex items-center gap-2 flex-wrap md:flex-nowrap">
               <h2 className="text-xl font-bold">ผลวิเคราะห์ :</h2>
               <span className="text-xl font-bold">{analysisResult.label}</span>
-            </div>
-            {/* ✅ ใช้ Component Badge และให้เด้งลงมาบรรทัดใหม่ในมือถือ */}
-            <div className="mt-2 md:mt-0">
               <Badge level={analysisResult.level} />
             </div>
           </div>

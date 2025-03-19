@@ -1,9 +1,27 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { List, X } from "phosphor-react"; // ไอคอน Hamburger และ Close
 
 function Nav() {
   const [isOpen, setIsOpen] = useState(false); // สร้าง State เปิด/ปิดเมนู
+  const menuRef = useRef(null); // ใช้อ้างอิงเมนู
+
+  // ✅ ตรวจจับการคลิกนอกพื้นที่เมนูเพื่อปิด
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
 
   return (
     <div className="navbar bg-white sticky top-0 left-0 w-full z-50 shadow-md font-kanit">
@@ -24,8 +42,9 @@ function Nav() {
         </button>
       </div>
 
-      {/* ✅ เมนูหลัก (เงาเฉพาะในมือถือ) */}
+      {/* ✅ เมนูหลัก (ปิดเองเมื่อกดนอกพื้นที่) */}
       <div
+        ref={menuRef}
         className={`absolute top-16 left-0 w-full bg-white md:static md:flex md:items-center md:w-auto transition-all duration-200 ease-in-out 
           ${isOpen ? "block shadow-lg" : "hidden"} md:shadow-none`}
       >
