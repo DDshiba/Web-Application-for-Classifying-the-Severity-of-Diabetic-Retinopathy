@@ -84,6 +84,16 @@ CLASS_LABELS = {
     4: {"label": "4_Proliferative_DR", "description": "ภาวะเบาหวานขึ้นจอประสาทตาขั้นรุนแรงมาก", "level": 4},
 }
 
+# ✅ ฟังก์ชันจัดรูปแบบค่า Softmax Output ให้เป็นข้อความอ่านง่าย
+def format_output(predictions, predicted_class):
+    output_text = "\n📊 ค่าเอาต์พุตของโมเดล:\n"
+    for i, prob in enumerate(predictions[0]):  # ดึงค่าออกจาก batch
+        output_text += f"คลาส {i} ({CLASS_LABELS[i]['label']}) → {prob:.6f} (≈ {prob*100:.2f}%)"
+        if i == predicted_class:
+            output_text += " ✅ (โมเดลเลือกคลาสนี้)"
+        output_text += "\n"
+    return output_text
+
 # ✅ API วิเคราะห์ภาพ
 @app.post("/analyze")
 async def analyze(file: UploadFile = File(...)):
@@ -107,6 +117,8 @@ async def analyze(file: UploadFile = File(...)):
         confidence = float(np.max(predictions))  
         predicted_info = CLASS_LABELS[predicted_class]
 
+        print(format_output(predictions, predicted_class))  # ✅ ใช้ฟังก์ชัน format_output()
+        
         return {
             "label": predicted_info["label"],
             "confidence": confidence,
