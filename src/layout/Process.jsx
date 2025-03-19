@@ -101,27 +101,21 @@ function Process() {
       </div>
       {/* ✅ แสดงผลลัพธ์การวิเคราะห์ */}
       {analysisResult && (
-
         <div className="w-full max-w-2xl bg-base-200 rounded-lg p-5 text-neutral">
-          <div className="flex flex-wrap items-center justify-between">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             {/* ✅ ส่วนของผลลัพธ์ */}
-            <div className="flex items-center gap-2 ">
+            <div className="flex items-center gap-2">
               <h2 className="text-xl font-bold">ผลวิเคราะห์ :</h2>
-              <span className=" text-xl font-bold mr-3">{analysisResult.label}</span>
-              {/* ✅ ใช้ Component Badge */}
+              <span className="text-xl font-bold">{analysisResult.label}</span>
+            </div>
+            {/* ✅ ใช้ Component Badge และให้เด้งลงมาบรรทัดใหม่ในมือถือ */}
+            <div className="mt-2 md:mt-0">
               <Badge level={analysisResult.level} />
             </div>
-
-            {/* ✅ ส่วนของความมั่นใจ 
-            <p className="text-green-600 font-bold text-right md:text-left">
-              ความมั่นใจ: {Math.round(analysisResult.confidence * 100)}%
-            </p>*/}
           </div>
 
           {/* ✅ คำอธิบายระดับ */}
-          <p className="text-gray-700 text-sm mt-2">
-            {analysisResult.description}
-          </p>
+          <p className="text-gray-700 text-sm mt-2">{analysisResult.description}</p>
         </div>
       )}
     </div>

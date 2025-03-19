@@ -1,22 +1,30 @@
 import os
 import tensorflow as tf
-import datetime
 import cv2
 import numpy as np
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
 import io
+import uvicorn
+from functools import lru_cache
 from tensorflow.keras.applications.efficientnet import preprocess_input
 
-# ✅ ปิด GPU เพื่อให้รันได้บน CPU
+# ✅ ปิด GPU เพื่อป้องกันปัญหาบน Hugging Face
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 tf.config.set_visible_devices([], 'GPU')
 
 # ✅ สร้าง FastAPI App
-app = FastAPI()
+app = FastAPI(
+    title="DeepEye API",
+    description="API for DR Classification",
+    docs_url="/docs",
+    redoc_url="/redoc",
+)
 
-# ✅ ตั้งค่า CORS (อนุญาตทุกโดเมน)
+print("✅ API Started on Hugging Face Spaces!")
+
+# ✅ ตั้งค่า CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -25,30 +33,30 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ✅ Endpoint เช็กว่า API ทำงานได้
+# ✅ Debug เช็ก API ที่โหลด
+@app.get("/debug-endpoints")
+def debug_endpoints():
+    return {"endpoints": [route.path for route in app.routes]}
+
+# ✅ API Health Check
 @app.get("/")
 def home():
     return {"message": "🔥 FastAPI Backend is running on Hugging Face Spaces!"}
 
-# ✅ กำหนดพาธของโมเดล
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))  
-MODEL_PATH = os.path.join(BASE_DIR, "model", "EfficientNetB0_AdamW_freeze100__lr0_00001_1024512_tanh_RGB.keras")
-UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")  
-PROCESSED_FOLDER = os.path.join(BASE_DIR, "processed")  
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-os.makedirs(PROCESSED_FOLDER, exist_ok=True)
+@app.get("/ping")
+def ping():
+    return {"status": "success", "message": "✅ API is live!"}
 
 # ✅ โหลดโมเดลแบบ Lazy Loading
-model = None
+model_path = os.path.join("EfficientNetB0_AdamW_freeze100__lr0_00001_1024512_tanh_RGB.keras")
+
+@lru_cache()
 def load_model():
-    global model
-    if model is None and os.path.exists(MODEL_PATH):
-        print(f"✅ พบไฟล์โมเดลที่: {MODEL_PATH}")
-        try:
-            model = tf.keras.models.load_model(MODEL_PATH)
-            print("✅ โมเดลโหลดสำเร็จ!")
-        except Exception as e:
-            print(f"❌ โมเดลโหลดไม่สำเร็จ: {e}")
+    if os.path.exists(model_path):
+        print(f"✅ พบไฟล์โมเดลที่: {model_path}")
+        return tf.keras.models.load_model(model_path)
+    print(f"❌ ไม่พบไฟล์โมเดลที่: {model_path}")
+    return None
 
 # ✅ ฟังก์ชันปรับ Contrast ของภาพโดยใช้ CLAHE (RGB)
 def apply_clahe_rgb(image):
@@ -61,16 +69,11 @@ def apply_clahe_rgb(image):
     return cv2.merge((r_clahe, g_clahe, b_clahe))
 
 # ✅ ฟังก์ชันพรีโพรเซสซิงภาพ
-def preprocess_image(image, save_path=None):
+def preprocess_image(image):
     image = cv2.resize(image, (224, 224), interpolation=cv2.INTER_AREA)
     image = apply_clahe_rgb(image)
-
-    if save_path:
-        cv2.imwrite(save_path, cv2.cvtColor(image, cv2.COLOR_RGB2BGR))
-
     image = image.astype("float32") / 255.0
-    image = preprocess_input(image * 255.0)
-    return np.expand_dims(image, axis=0)
+    return np.expand_dims(preprocess_input(image * 255.0), axis=0)
 
 # ✅ ระดับของ DR และคำอธิบาย
 CLASS_LABELS = {
@@ -81,10 +84,11 @@ CLASS_LABELS = {
     4: {"label": "4_Proliferative_DR", "description": "ภาวะเบาหวานขึ้นจอประสาทตาขั้นรุนแรงมาก", "level": 4},
 }
 
-# ✅ API รับภาพจาก React และส่งผลวิเคราะห์กลับ
+# ✅ API วิเคราะห์ภาพ
 @app.post("/analyze")
 async def analyze(file: UploadFile = File(...)):
-    load_model()  # โหลดโมเดลเมื่อมีการเรียก API
+    print("✅ API /analyze ถูกเรียกแล้ว!")  # ✅ DEBUG LOG
+    model = load_model()  # ✅ โหลดโมเดลถ้ายังไม่ได้โหลด
 
     if model is None:
         return {"error": "❌ โมเดลโหลดไม่สำเร็จ หรือโมเดลไม่มีอยู่จริง"}
@@ -94,16 +98,8 @@ async def analyze(file: UploadFile = File(...)):
         img = Image.open(io.BytesIO(await file.read())).convert("RGB")
         img_cv = np.array(img)[:, :, ::-1]  # ✅ แปลง RGB → BGR
 
-        # ✅ บันทึกภาพต้นฉบับ
-        timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-        original_img_path = os.path.join(UPLOAD_FOLDER, f"uploaded_{timestamp}.png")
-        img.save(original_img_path)
-
-        # ✅ กำหนดพาธสำหรับบันทึกภาพที่ผ่าน CLAHE
-        processed_img_path = os.path.join(PROCESSED_FOLDER, f"processed_{timestamp}.png")
-
-        # ✅ พรีโพรเซสภาพ พร้อมบันทึก
-        processed_img = preprocess_image(img_cv, save_path=processed_img_path)
+        # ✅ พรีโพรเซสภาพ
+        processed_img = preprocess_image(img_cv)
 
         # ✅ ทำการพยากรณ์ด้วยโมเดล
         predictions = model.predict(processed_img)
@@ -115,21 +111,13 @@ async def analyze(file: UploadFile = File(...)):
             "label": predicted_info["label"],
             "confidence": confidence,
             "description": predicted_info["description"],
-            "level": predicted_info["level"],
-            "input_shape": str(processed_img.shape),
-            "output_shape": str(predictions.shape),
-            "original_size": img.size,
-            "original_image": original_img_path,
-            "processed_image": processed_img_path
+            "level": predicted_info["level"]
         }
 
     except Exception as e:
         return {"error": str(e)}
 
-
-
-# ✅ รัน Backend
+# ✅ รัน FastAPI โดยใช้ Uvicorn
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 7860))  # เปลี่ยนเป็นพอร์ต 7860 สำหรับ Hugging Face
-    uvicorn.run("app:app", host="0.0.0.0", port=port, reload=True)
-
+    print("🚀 Starting Uvicorn Server...")
+    uvicorn.run(app, host="0.0.0.0", port=7860, log_level="debug")
